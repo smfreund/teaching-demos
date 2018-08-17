@@ -1,0 +1,20 @@
+#Module #X
+###*Data visualization with ggplot2*
+###*September 2018*
+
+##Purpose of visualizing data
+Plotting for QA, data exploration, and presentation of analytical results
+
+##Typical plot construction in base R
+
+##ggplot
+
+##ggplot extensions
+
+##Design considerations
+Discussion of color, accessibility, brief design principles
+
+##Interactive plots: leaflet and plotly
+
+##Other plotting libraries
+This section might mention visreg, corrplot, maptree, others specific to certain analytical methods
