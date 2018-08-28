@@ -1,20 +1,39 @@
-#Module #X
-###*Data visualization with ggplot2*
-###*September 2018*
+---
+title: "Module 2.X"
+author: "Advanced data visualization with ggplot and more (Stephanie Freund)"
+date: "September 2018"
+output: 
+  html_document: 
+    theme: journal
+    toc: yes
+    toc_float: yes
+---
 
-##Purpose of visualizing data
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make your plots quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package `ggplot2` is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (`leaflet` and `plotly`) and for visualizations specific to particular analytical techniques (`corrplot`, `visreg`, `rpart.plot`).
+
+### Load script for module #2.X
+
+1. Click [here]() to download the script! Save the script to a convenient folder on your laptop.
+
+2. Load your script in RStudio. To do this, open RStudio and click on the folder icon in the toolbar at the top and load your script. 
+
+###Purpose of visualizing data
 Plotting for QA, data exploration, and presentation of analytical results
 
-##Typical plot construction in base R
-
-##ggplot
-
-##ggplot extensions
-
-##Design considerations
+###Design considerations
 Discussion of color, accessibility, brief design principles
 
-##Interactive plots: leaflet and plotly
+###ggplot
 
-##Other plotting libraries
-This section might mention visreg, corrplot, maptree, others specific to certain analytical methods
+###ggplot extensions
+
+###Interactive plots: leaflet and plotly
+
+###Other plotting libraries
+This section might mention visreg, corrplot, maptree, rpart.plot, others specific to certain analytical methods
+
+###Challenge exercises
