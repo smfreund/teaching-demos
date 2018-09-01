@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make your plots quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package `ggplot2` is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (`leaflet` and `plotly`) and for visualizations specific to particular analytical techniques (`corrplot`, `visreg`, `rpart.plot`).
+On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make them quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package `ggplot2` is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (`leaflet` and `plotly`) and for visualizations specific to particular analytical techniques (`corrplot`, `visreg`, `rpart.plot`).
 
 ### Load script for module #2.X
 
@@ -21,19 +21,30 @@ On Day 1, you learned how to create several types of plots in base R. Base R is 
 
 2. Load your script in RStudio. To do this, open RStudio and click on the folder icon in the toolbar at the top and load your script. 
 
-###Purpose of visualizing data
+### Purpose of visualizing data
 Plotting for QA, data exploration, and presentation of analytical results
 
-###Design considerations
+### Design considerations
 Discussion of color, accessibility, brief design principles
 
-###ggplot
+### Using ggplot2
 
-###ggplot extensions
+ggplot2 is an R package developed by Hadley Wickham and colleagues that is based on Leland Wilkinson's ["Grammar of Graphics"](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448). If you are interested in learning more about the philosophy behind ggplot2 and object-oriented design, you can read Hadley's paper about it [here](http://vita.had.co.nz/papers/layered-grammar.pdf). All graphics produced in ggplot2 are built using elements of this grammatical framework. ggplot2 is modular, so that you can easily modify how your plot looks by adding or editing layers, and it generates more features by default (e.g. gridlines, legends with titles, etc) than base R. This saves you time spent cobbling together all of these elements from scratch.
 
-###Interactive plots: leaflet and plotly
+A typical workflow begins with initiating plotting with the `ggplot()` function and specifying your dataset. You can then add geometric objects, beginning with `geom_`, to represent your data in the form of a boxplot (`geom_boxplot()`), scatterplot (`geom_point()`), or a variety of other types of plots. The `aes()` function can be called within these "geoms" to specify which variables to display and to adjust how the data are displayed. `aes()` can also be used within the initial call to `ggplot()`.
 
-###Other plotting libraries
+To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
+
+```{r}
+#Load the dataset
+soil<-data.frame(carData::Soils)
+```
+
+### ggplot extensions
+
+### Interactive plots: leaflet and plotly
+
+### Other plotting libraries
 This section might mention visreg, corrplot, maptree, rpart.plot, others specific to certain analytical methods
 
-###Challenge exercises
+### Challenge exercises
