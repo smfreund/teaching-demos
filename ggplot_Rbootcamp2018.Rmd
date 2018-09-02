@@ -31,14 +31,82 @@ Discussion of color, accessibility, brief design principles
 
 ggplot2 is an R package developed by Hadley Wickham and colleagues that is based on Leland Wilkinson's ["Grammar of Graphics"](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448). If you are interested in learning more about the philosophy behind ggplot2 and object-oriented design, you can read Hadley's paper about it [here](http://vita.had.co.nz/papers/layered-grammar.pdf). All graphics produced in ggplot2 are built using elements of this grammatical framework. ggplot2 is modular, so that you can easily modify how your plot looks by adding or editing layers, and it generates more features by default (e.g. gridlines, legends with titles, etc) than base R. This saves you time spent cobbling together all of these elements from scratch.
 
-A typical workflow begins with initiating plotting with the `ggplot()` function and specifying your dataset. You can then add geometric objects, beginning with `geom_`, to represent your data in the form of a boxplot (`geom_boxplot()`), scatterplot (`geom_point()`), or a variety of other types of plots. The `aes()` function can be called within these "geoms" to specify which variables to display and to adjust how the data are displayed. `aes()` can also be used within the initial call to `ggplot()`.
+A typical workflow begins with initiating plotting with the `**ggplot()**` function and specifying your dataset. You can then add geometric objects, beginning with `**geom_**`, to represent your data in the form of a boxplot (`geom_boxplot()`), scatterplot (`geom_point()`), or a variety of other types of plots. The `**aes()**` function can be called within these "geoms" to specify which variables to display and to adjust how the data are displayed. `aes()` can also be used within the initial call to `ggplot()`.
 
 To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
 
+First, install and load ggplot2.
 ```{r}
-#Load the dataset
-soil<-data.frame(carData::Soils)
+#install.packages('ggplot2')
+library(ggplot2)
 ```
+
+Now load the dataset.
+
+```{r}
+#Load the dataset and see what variables it contains
+soil<-data.frame(carData::Soils)
+head(soil)
+```
+
+We'll start with a basic boxplot. Let's say we're interested in how pH, a continuous variable, varies with the contour position, a categorical factor.  
+
+```{r}
+ggplot(soil) +
+  geom_boxplot(aes(Contour,pH))
+```
+
+You can see that the default plot includes a gray background with white gridlines. This makes all of the elements on this plot easy to see, but as you start adjusting colors and identifying your personal preferences, you'll probably want to customize this -- ggplot has a ton of options for doing so. 
+
+Let's try a scatterplot of two continuous variables, Calcium content and pH.
+
+```{r}
+ggplot(soil) +
+  geom_point(aes(pH,Ca))
+```
+
+Now let's say you wanted to examine how the relationship between pH and Ca varies with depth. You could go back to your scatterplot and use color to identify points from the different sampling depths. ggplot will select default colors that display well against the default gray background.
+
+```{r}
+ggplot(soil) +
+  geom_point(aes(pH,Ca,color=Depth))
+```
+
+We can play with how those points look if we want them to show up more boldly. Take note that arguments that affect all of the points equally, and don't have anything to do with the *data*, fall outside of the `aes` function.
+
+```{r}
+ggplot(soil) +
+  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5)
+```
+
+Cool! Let's use the same grammar to plot relationships between pH and several soil nutrients on the same graph. Notice that the y axis label defaults to the first set of points (Ca), and we'd need to modify it (you'll see how to change axis labels in a moment).
+
+```{r}
+ggplot(soil, aes(x=pH)) +
+  geom_point(aes(y=Ca), shape=21, fill="red", color="black", size=4, stroke=1.5) +
+  geom_point(aes(y=Mg), shape=21, fill="blue", color="black", size=4, stroke=1.5) +
+  geom_point(aes(y=Na), shape=21, fill="gray30", color="black", size=4, stroke=1.5)
+```
+
+Here's another way to plot multiple series, after reshaping with tidyr. This lets us plot our different nutrients as factor levels without typing each one with its specifications on its own line, and generates a legend that identifies the series (and also gives the default ggplot colors).
+
+```{r}
+soil2<-tidyr::gather(soil, nutrient, value, c(10,11,13))
+ggplot(soil2) +
+  geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5)
+```
+
+What if instead of Na, we had K as our third nutrient of interest?
+
+```{r}
+soil2<-tidyr::gather(soil, nutrient, value, c(10,11,12))
+ggplot(soil2) +
+  geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5)
+```
+
+The problem here is that K occurs at natural concentrations that differ from the other nutrients by an order of magnitude, so it's difficult to examine them all on the same scale. If you want these relationships displayed on separate panels, rather than all on the same graph, you can use facets. (**Remember to mention scales=free**)  While we're at it, let's also make sure that the responses have units attached to them in the legend -- this is accomplished using the **theme** functions.
+
+#Note to self: include geoms, facets, scales (including color scales, axis scaling), themes, legends
 
 ### ggplot extensions
 
