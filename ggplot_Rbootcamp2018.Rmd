@@ -37,10 +37,15 @@ A typical workflow begins with initiating plotting with the `**ggplot()**` funct
 
 To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
 
-First, install and load ggplot2.
+First, install and load ggplot2 and the other packages we'll be using for this module.
 ```{r}
 #install.packages('ggplot2')
 library(ggplot2)
+#install.packages('')
+#install.packages('')
+#install.packages('')
+#install.packages('')
+#install.packages('')
 ```
 
 Now load the dataset.
@@ -81,7 +86,7 @@ ggplot(soil) +
   geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5)
 ```
 
-Cool! Let's use the same grammar to plot relationships between pH and several soil nutrients on the same graph. Notice that the y axis label defaults to the first set of points (Ca), and we'd need to modify it (you'll see how to change axis labels in a moment).
+Cool! Let's use the same grammar to plot relationships between pH and several soil nutrients on the same graph. Notice that the y axis label defaults to the first set of points (Ca), and we'd need to modify it. The depths in the legend also have no units! You'll see how to change things like axis labels and legend titles in a moment.
 
 ```{r}
 ggplot(soil, aes(x=pH)) +
@@ -114,7 +119,7 @@ The next plot introduces:
 
 * **facets**, which allow you to display data on separate panels using some grouping variable 
 
-* **scales**, which allow you to adjust how to represent the data on axes and colors
+* **scales**, which allow you to adjust how to represent the data with axes and colors
 
 * **themes**, which allow you to adjust the entire plot aesthetic (using `theme_X()`) as well as individual elements of legends, text, and more (using `theme()`).
 
@@ -195,10 +200,39 @@ Speaking of color...
 
 Sometimes sticking to the default colors in ggplot isn't the best choice. You might have factors representing ordered ranks, like in an experiment with different levels of light exposure, and want to represent these levels on a monochromatic scale. Or you might want to make a map displaying regions of positive or negative change in forest cover, using a diverging color scale. Or you don't even like the default ggplot colors, and have your own preferred color schemes. It's also important to remember that red-green colorblindness is fairly common, so if you are presenting data that must be distinguished by colors in a single plotting area, you should probably avoid this combination or combine it with changes in value (light to dark) in order for your plot to be accessible.
 
+Going back to our earlier example showing Ca content by pH at different depths, let's say we want a color scheme where deeper depths are represented by darker values of the same color. We can do this by using another scale function.
+
+One method is to use `scale_fill_brewer`, and select an already composed color palette from RColorBrewer (a package you'll need to install). You can check out all of the options available in RColorBrewer by entering `display.brewer.all()`, which shows the sequential palettes, then categorical palettes, than diverging palettes.
+
+```{r}
+display.brewer.all()
+```
+
+I'm going to pick the YlOrBr (Yellow-Orange-Brown) palette, because those seem like good soil-y colors. Notice that because `fill` is mapped to the values of the data, inside this function is where I can change the title of the legend (and the labels for the different values, if I wanted to do that).
+
+```{r}
+ggplot(soil) +
+  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5) +
+  theme_bw() +
+  ylab('Ca (mg/100g soil)') +
+  scale_fill_brewer(palette='YlOrBr', name='Depth (cm)')
+
+```
+
+Another method is to use `scale_fill_manual`, with which you define your own palette.
+To pick out your colors, you can use the [names of colors]('http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) already recognized by R, or use [hex codes](https://htmlcolorcodes.com/) for any color you want.
 
 
+```{r}
+ggplot(soil) +
+  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5) +
+  theme_bw() +
+  ylab('Ca (mg/100g soil)') +
+  scale_fill_manual(values=c('#FFF0BF','#FFC300','#BF9200','#604900'), name='Depth (cm)')
+```
 
-* NEXT TALK ABOUT COLOR STUFF: R COLOR BREWER SCALES, CREATING YOUR OWN SCALES
+What if depth were a continuous variable, rather than a set of four discrete categories? We could use `scale_fill_gradient`, supply the hues we want (one for monochromatic, two for diverging) and R would map the soil depth values to color values along the gradient.
+
 * If time, add stuff for ggplot stats -- error bars, trendlines, overlaying density distributions on histograms, etc. Also LABELS! (see ggrepel)
 
 ### ggplot extensions
