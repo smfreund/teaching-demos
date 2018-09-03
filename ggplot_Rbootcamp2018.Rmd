@@ -192,13 +192,15 @@ Sometimes sticking to the default colors in ggplot isn't the best choice. You mi
 * NEXT TALK ABOUT COLOR STUFF: R COLOR BREWER SCALES, CREATING YOUR OWN SCALES
 * Note to self: include geoms, facets, scales (including color scales, axis scaling), themes, legends
 * Maybe I should also throw in `gridExtra` since it's sweet
-* If time, add stuff for ggplot stats -- error bars, trendlines, overlaying density distributions on histograms, etc.
+* If time, add stuff for ggplot stats -- error bars, trendlines, overlaying density distributions on histograms, etc. Also LABELS! (see ggrepel)
 
 ### ggplot extensions
+
+ggmap, ggridges, http://www.ggplot2-exts.org/gallery/ 
 
 ### Interactive plots: leaflet and plotly
 
 ### Other plotting libraries
-This section might mention visreg, corrplot, maptree, rpart.plot, others specific to certain analytical methods
+This section might mention visreg, corrplot/ggcorrplot, maptree, rpart.plot, others specific to certain analytical methods
 
 ### Challenge exercises
