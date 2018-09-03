@@ -31,6 +31,8 @@ Discussion of color, accessibility, brief design principles
 
 ggplot2 is an R package developed by Hadley Wickham and colleagues that is based on Leland Wilkinson's ["Grammar of Graphics"](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448). If you are interested in learning more about the philosophy behind ggplot2 and object-oriented design, you can read Hadley's paper about it [here](http://vita.had.co.nz/papers/layered-grammar.pdf). All graphics produced in ggplot2 are built using elements of this grammatical framework. ggplot2 is modular, so that you can easily modify how your plot looks by adding or editing layers, and it generates more features by default (e.g. gridlines, legends with titles, etc) than base R. This saves you time spent cobbling together all of these elements from scratch.
 
+#### Basics
+
 A typical workflow begins with initiating plotting with the `**ggplot()**` function and specifying your dataset. You can then add geometric objects, beginning with `**geom_**`, to represent your data in the form of a boxplot (`geom_boxplot()`), scatterplot (`geom_point()`), or a variety of other types of plots. The `**aes()**` function can be called within these "geoms" to specify which variables to display and to adjust how the data are displayed. `aes()` can also be used within the initial call to `ggplot()`.
 
 To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
@@ -104,7 +106,9 @@ ggplot(soil2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5)
 ```
 
-The problem here is that K occurs at natural concentrations that differ from the other nutrients by an order of magnitude, so it's difficult to examine them all on the same scale. While we're at it, let's also make sure that we specify the response units on the y-axis. 
+The problem here is that K occurs at natural concentrations that differ from the other nutrients by an order of magnitude, so it's difficult to examine them all on the same scale. One approach we can take is to plot them separately. While we're at it, let's also make sure that we specify the response units on the y-axis. 
+
+#### Facets, scales, and themes
 
 The next plot introduces: 
 
@@ -117,7 +121,8 @@ The next plot introduces:
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil2) +
-  geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5) +
+  geom_point(aes(x=pH, y=value, fill=nutrient), 
+             shape=21, color="black", size=4, stroke=1.5) +
   facet_wrap(~nutrient, scales='free_y') +
   ylab("mg / 100 g soil") +
   theme_bw() +
@@ -181,17 +186,19 @@ ggplot(soil2) +
         strip.text = element_text(size = 16, face='bold'))
 ```
 
-Check out the options and play around with different themes until you find some that appeal to you and lend themselves to the type of data visualization and color scales you plan to use.
+
+Check out the options and play around with different themes until you find some that appeal to you and lend themselves to the type of data visualization and color scales you plan to use. You can also fine-tune pretty much any of the details (gridlines or no? plot borders? line weight of the borders and gridlines? axis label angles?) to your heart's content using the arguments in the `theme()` function.
 
 Speaking of color...
+
+#### Specifying colors
 
 Sometimes sticking to the default colors in ggplot isn't the best choice. You might have factors representing ordered ranks, like in an experiment with different levels of light exposure, and want to represent these levels on a monochromatic scale. Or you might want to make a map displaying regions of positive or negative change in forest cover, using a diverging color scale. Or you don't even like the default ggplot colors, and have your own preferred color schemes. It's also important to remember that red-green colorblindness is fairly common, so if you are presenting data that must be distinguished by colors in a single plotting area, you should probably avoid this combination or combine it with changes in value (light to dark) in order for your plot to be accessible.
 
 
 
+
 * NEXT TALK ABOUT COLOR STUFF: R COLOR BREWER SCALES, CREATING YOUR OWN SCALES
-* Note to self: include geoms, facets, scales (including color scales, axis scaling), themes, legends
-* Maybe I should also throw in `gridExtra` since it's sweet
 * If time, add stuff for ggplot stats -- error bars, trendlines, overlaying density distributions on histograms, etc. Also LABELS! (see ggrepel)
 
 ### ggplot extensions
