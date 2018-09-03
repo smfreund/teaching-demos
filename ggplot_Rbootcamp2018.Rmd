@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make them quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package `ggplot2` is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (`leaflet` and `plotly`) and for visualizations specific to particular analytical techniques (`corrplot`, `visreg`, `rpart.plot`).
+On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make them quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package ggplot2 is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (leaflet and plotly) and for visualizations specific to particular analytical techniques (corrplot, visreg, rpart.plot).
 
 ### Load script for module #2.X
 
