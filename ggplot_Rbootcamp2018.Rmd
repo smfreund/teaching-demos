@@ -107,8 +107,11 @@ ggplot(soil2) +
 The problem here is that K occurs at natural concentrations that differ from the other nutrients by an order of magnitude, so it's difficult to examine them all on the same scale. While we're at it, let's also make sure that we specify the response units on the y-axis. 
 
 The next plot introduces: 
+
 * **facets**, which allow you to display data on separate panels using some grouping variable 
+
 * **scales**, which allow you to adjust how to represent the data on axes and colors
+
 * **themes**, which allow you to adjust the entire plot aesthetic (using `theme_X()`) as well as individual elements of legends, text, and more (using `theme()`).
 
 
