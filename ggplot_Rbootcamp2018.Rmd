@@ -204,7 +204,8 @@ Going back to our earlier example showing Ca content by pH at different depths, 
 
 One method is to use `scale_fill_brewer`, and select an already composed color palette from RColorBrewer (a package you'll need to install). You can check out all of the options available in RColorBrewer by entering `display.brewer.all()`, which shows the sequential palettes, then categorical palettes, than diverging palettes.
 
-```{r}
+```{r fig.height=10, fig.width=8}
+library(RColorBrewer)
 display.brewer.all()
 ```
 
@@ -232,6 +233,8 @@ ggplot(soil) +
 ```
 
 What if depth were a continuous variable, rather than a set of four discrete categories? We could use `scale_fill_gradient`, supply the hues we want (one for monochromatic, two for diverging) and R would map the soil depth values to color values along the gradient.
+
+#### Adding statistics
 
 * If time, add stuff for ggplot stats -- error bars, trendlines, overlaying density distributions on histograms, etc. Also LABELS! (see ggrepel)
 
