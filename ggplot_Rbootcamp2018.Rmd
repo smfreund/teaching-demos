@@ -13,16 +13,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make them quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package ggplot2 is extremely useful. In this module, we'll briefly cover some design considerations for data visualization before working with some of ggplot's plotting capabilities. We'll also look at a few other packages that allow for interactive plotting (leaflet and plotly) and for visualizations specific to particular analytical techniques (corrplot, visreg, rpart.plot).
+Visualization often plays a major role in the research process, from quality assurance, to data exploration, to the presentation of analytical results. On Day 1, you learned how to create several types of plots in base R. Base R is great for whipping up some quick plots for initial data exploration, and you can make them quite beautiful looking as well. When you start creating a lot of plots for which you might want to quickly and easily adjust graphical elements, or want to create more complex plots that display a lot of information in one place, the data visualization package ggplot2 is extremely useful. In this module, we'll introduce ggplot syntax and briefly survey some of the package's plotting capabilities.
 
 ### Load script for module #2.X
 
 1. Click [here]() to download the script! Save the script to a convenient folder on your laptop.
 
 2. Load your script in RStudio. To do this, open RStudio and click on the folder icon in the toolbar at the top and load your script. 
-
-### Purpose of visualizing data
-Plotting for QA, data exploration, and presentation of analytical results
 
 ### Using ggplot2
 
@@ -35,7 +32,7 @@ A typical workflow begins with initiating plotting with the **`ggplot()`** funct
 To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
 
 First, install and load ggplot2 and the other packages we'll be using for this module.
-```{r warning=FALSE}
+```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(ggthemes)
@@ -49,7 +46,7 @@ Now load the dataset.
 
 ```{r}
 #Load the dataset and see what variables it contains
-soil<-data.frame(carData::Soils)
+soil <- data.frame(Soils)
 head(soil)
 ```
 
@@ -57,7 +54,7 @@ We'll start with a basic boxplot. Let's say we're interested in how pH, a contin
 
 ```{r}
 ggplot(soil) +
-  geom_boxplot(aes(Contour,pH))
+  geom_boxplot(aes(x=Contour, y=pH))
 ```
 
 You can see that the default plot includes a gray background with white gridlines. This makes all of the elements on this plot easy to see, but as you start adjusting colors and identifying your personal preferences, you'll probably want to customize this -- ggplot has a ton of options for doing so. 
@@ -66,21 +63,21 @@ Let's try a scatterplot of two continuous variables, Calcium content and pH.
 
 ```{r}
 ggplot(soil) +
-  geom_point(aes(pH,Ca))
+  geom_point(aes(x=pH, y=Ca))
 ```
 
 Now let's say you wanted to examine how the relationship between pH and Ca varies with depth. You could go back to your scatterplot and use color to identify points from the different sampling depths. ggplot will select default colors that display well against the default gray background.
 
 ```{r}
 ggplot(soil) +
-  geom_point(aes(pH,Ca,color=Depth))
+  geom_point(aes(x=pH, y=Ca, color=Depth))
 ```
 
-We can play with how those points look if we want them to show up more boldly. Take note that arguments that affect all of the points equally, and don't have anything to do with the *data*, fall outside of the **`aes`** function.
+We can play with how those points look if we want them to show up more boldly. Take note that arguments that affect all of the points equally, and don't relate to how *variables* are displayed, fall outside of the **`aes`** function.
 
 ```{r}
 ggplot(soil) +
-  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5)
+  geom_point(aes(x=pH, y=Ca, fill=Depth), shape=21, color="black", size=4, stroke=1.5)
 ```
 
 Cool! Let's use the same grammar to plot relationships between pH and several soil nutrients on the same graph. Notice that the y axis label defaults to the first set of points (Ca), and we'd need to modify it. The depths in the legend also have no units! You'll see how to change things like axis labels and legend titles in a moment.
@@ -95,7 +92,7 @@ ggplot(soil, aes(x=pH)) +
 Here's another way to plot multiple series, after reshaping with tidyr. This lets us plot our different nutrients as factor levels without typing each one with its specifications on its own line, and generates a legend that identifies the series (and also gives the default ggplot colors).
 
 ```{r}
-soil.nut<-tidyr::gather(soil, nutrient, value, c(10,11,13))
+soil.nut <- gather(soil, nutrient, value, c(10,11,13))
 ggplot(soil.nut) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5)
 ```
@@ -103,7 +100,7 @@ ggplot(soil.nut) +
 What if instead of Na, we had K as our third nutrient of interest?
 
 ```{r}
-soil.nut2<-tidyr::gather(soil, nutrient, value, c(10,11,12))
+soil.nut2 <- gather(soil, nutrient, value, c(10,11,12))
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5)
 ```
@@ -125,13 +122,13 @@ The next plot introduces:
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), 
              shape=21, color="black", size=4, stroke=1.5) +
-  facet_wrap(~nutrient, scales='free_y') +
+  facet_wrap(~nutrient, scales="free_y") +
   ylab("mg / 100 g soil") +
   theme_bw() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
     
 ```
 
@@ -143,39 +140,41 @@ We also changed the theme! ggplot has [8 built-in themes](http://r4ds.had.co.nz/
 ```{r fig.height=6, fig.width=14, echo=FALSE}
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5) +
-  facet_wrap(~nutrient, scales='free_y') +
+  facet_wrap(~nutrient, scales="free_y") +
   ylab("mg / 100 g soil") +
   theme_igray() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
+**`theme_igray`**
 
 ```{r fig.height=6, fig.width=14, echo=FALSE}
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5) +
-  facet_wrap(~nutrient, scales='free_y') +
+  facet_wrap(~nutrient, scales="free_y") +
   ylab("mg / 100 g soil") +
   theme_economist() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
+**`theme_economist`**
 
 ```{r fig.height=6, fig.width=14, echo=FALSE}
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), shape=21, color="black", size=4, stroke=1.5) +
-  facet_wrap(~nutrient, scales='free_y') +
+  facet_wrap(~nutrient, scales="free_y") +
   ylab("mg / 100 g soil") +
   theme_gdocs() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
-
+**`theme_gdocs`**
 
 Check out the options and play around with different themes until you find some that appeal to you and lend themselves to the type of data visualization and color scales you plan to use. You can also fine-tune pretty much any of the details (gridlines or no? plot borders? line weight of the borders and gridlines? axis label angles?) to your heart's content using the arguments in the **`theme()`** function.
 
@@ -189,7 +188,7 @@ Going back to our earlier example showing Ca content by pH at different depths, 
 
 One method is to use **`scale_fill_brewer`**, and select an already composed color palette from RColorBrewer (a package you'll need to install). You can check out all of the options available in RColorBrewer by entering **`display.brewer.all()`**, which shows the sequential palettes, then categorical palettes, than diverging palettes.
 
-```{r fig.height=10, fig.width=8}
+```{r fig.height=8, fig.width=6}
 display.brewer.all()
 ```
 
@@ -197,10 +196,10 @@ I'm going to pick the YlOrBr (Yellow-Orange-Brown) palette, because those seem l
 
 ```{r}
 ggplot(soil) +
-  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5) +
+  geom_point(aes(x=pH, y=Ca, fill=Depth), shape=21, color="black", size=4, stroke=1.5) +
   theme_bw() +
-  ylab('Ca (mg/100g soil)') +
-  scale_fill_brewer(palette='YlOrBr', name='Depth (cm)')
+  ylab("Ca (mg/100g soil)") +
+  scale_fill_brewer(palette="YlOrBr", name="Depth (cm)")
 
 ```
 
@@ -210,10 +209,10 @@ To pick out your colors, you can use the [names of colors]('http://www.stat.colu
 
 ```{r}
 ggplot(soil) +
-  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5) +
+  geom_point(aes(x=pH, y=Ca, fill=Depth), shape=21, color="black", size=4, stroke=1.5) +
   theme_bw() +
-  ylab('Ca (mg/100g soil)') +
-  scale_fill_manual(values=c('#FFF0BF','#FFC300','#BF9200','#604900'), name='Depth (cm)')
+  ylab("Ca (mg/100g soil)") +
+  scale_fill_manual(values=c("#FFF0BF","#FFC300","#BF9200","#604900"), name="Depth (cm)")
 ```
 
 What if depth were a continuous variable, rather than a set of four discrete categories? We could use **`scale_fill_gradient`**, supply the hues we want (one for monochromatic, two for diverging) and R would map the soil depth values to color values along the gradient.
@@ -226,14 +225,14 @@ Next, we might want to add a trendline to each set of points. Try it for the plo
 ggplot(soil.nut2) +
   geom_point(aes(x=pH, y=value, fill=nutrient), 
              shape=21, color="black", size=4, stroke=1.5) +
-  geom_smooth(aes(x=pH, y=value), method='lm', color='black') +
-  facet_wrap(~nutrient, scales='free_y') +
+  geom_smooth(aes(x=pH, y=value), method="lm", color="black") +
+  facet_wrap(~nutrient, scales="free_y") +
   ylab("mg / 100 g soil") +
   theme_bw() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
     
 ```
 
@@ -245,44 +244,44 @@ First, a simple histogram of 3 soil nutrients.
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
-  geom_histogram(aes(x=value), color='black',fill='white',bins=15) +
-  facet_wrap(~nutrient, scales='free') +
-  xlab('mg / 100g soil') +
+  geom_histogram(aes(x=value), color="black", fill="white", bins=15) +
+  facet_wrap(~nutrient, scales="free") +
+  xlab("mg / 100g soil") +
   theme_dark() +
   theme(axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
 
 Here is how to add a density curve to the histogram with another **`geom`**:
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
-  geom_histogram(aes(x=value, y=..density..), color='black', fill='white',bins=15) +
+  geom_histogram(aes(x=value, y=..density..), color="black", fill="white", bins=15) +
   geom_density(aes(x=value,color=nutrient), size=1.5) +
-  facet_wrap(~nutrient, scales='free') +
-  xlab('mg / 100g soil') +
+  facet_wrap(~nutrient, scales="free") +
+  xlab("mg / 100g soil") +
   theme_dark() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
 
 And here's how we can compare our distributions to a normal distribution, using a **`stat`** function:
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
-  geom_histogram(aes(x=value, y=..density..), color='black', fill='white',bins=15) +
-  stat_function(fun = dnorm, color = 'blue', size = 1.5,
+  geom_histogram(aes(x=value, y=..density..), color="black", fill="white", bins=15) +
+  stat_function(fun = dnorm, color = "blue", size = 1.5,
                 args=list(mean=mean(soil.nut$value), sd=sd(soil.nut$value))) +
-  facet_wrap(~nutrient, scales='free') +
-  xlab('mg / 100g soil') +
+  facet_wrap(~nutrient, scales="free") +
+  xlab("mg / 100g soil") +
   theme_dark() +
-  theme(legend.position='none',
+  theme(legend.position="none",
         axis.text = element_text(size=14),
         axis.title = element_text(size=16),
-        strip.text = element_text(size = 16, face='bold'))
+        strip.text = element_text(size=16, face="bold"))
 ```
 
 Let's go back to our basic boxplot, the default plot for visualizing continuous data against categories.
@@ -290,8 +289,8 @@ Let's go back to our basic boxplot, the default plot for visualizing continuous 
 First, you may have noticed that the whiskers do not have caps on them, as they do in base R. This is a matter of ~~principle~~ personal preference, but if capless whiskers look "off" to you, then you can work around it using **`stat_boxplot`**. **`stat`** functions are another group of functions for creating layers based on statistical properties of the data. Another example is **`stat_summary`**, which we use in the example below to add means to the boxplot. 
 
 ```{r}
-ggplot(soil, aes(Contour,pH)) +
-  stat_boxplot(geom = "errorbar", width = 0.2) +  
+ggplot(soil, aes(x=Contour, y=pH)) +
+  stat_boxplot(geom="errorbar", width=0.2) +  
   geom_boxplot() +
   stat_summary(fun.y=mean, geom="point", size=5, color="black")
   
@@ -334,8 +333,8 @@ Happy plotting!
 #Solution
 
 ggplot(soil) +
-  geom_point(aes(pH,Ca,fill=Depth),shape=21, color='black', size=4, stroke=1.5) +
-  geom_smooth(method='lm',aes(pH,Ca,color=Depth), se=FALSE) +
+  geom_point(aes(pH, Ca, fill=Depth), shape=21, color='black', size=4, stroke=1.5) +
+  geom_smooth(method='lm', aes(pH, Ca, color=Depth), se=FALSE) +
   theme_bw() +
   ylab('Ca (mg/100g soil)') +
   scale_fill_manual(values=c('#FFF0BF','#FFC300','#BF9200','#604900'), name='Depth (cm)') +
@@ -354,4 +353,19 @@ ggplot(soil.nut) +
   stat_summary(aes(nutrient, value), 
                fun.y=mean, geom="point", shape=18, size=4, color='black')
   
+```
+
+3. Plot the density curves of Ca, Mg, and Na atop each other with fixed y and x axes. Make them transparent in color in order to see overlapping areas.
+
+```{r include=FALSE}
+
+#Solution
+
+ggplot(soil.nut) +
+  geom_density(aes(x=value, fill=nutrient), color="black", alpha=0.5) +
+  xlab("mg / 100g soil") +
+  theme_dark() +
+  theme(axis.text = element_text(size=14),
+        axis.title = element_text(size=16),
+        strip.text = element_text(size=16, face="bold"))
 ```
