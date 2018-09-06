@@ -35,15 +35,14 @@ A typical workflow begins with initiating plotting with the **`ggplot()`** funct
 To demonstrate, we'll use the Soils dataset from the carData package, which contains soil attributes from a gilgai landscape (depressions caused by shrinking and swelling of clays during dry and wet seasons) in Australia.
 
 First, install and load ggplot2 and the other packages we'll be using for this module.
-```{r message=FALSE}
+```{r warning=FALSE}
+library(tidyverse)
 library(ggplot2)
 library(ggthemes)
 library(carData)
 library(DAAG)
 library(RColorBrewer)
-library(maps)
-library(mapdata)
-library(ggmap)
+library(leaflet)
 ```
 
 Now load the dataset.
@@ -238,15 +237,16 @@ ggplot(soil.nut2) +
     
 ```
 
-#### Histograms and barplots
+#### Density curves and error bars
 
+Using **`geom_smooth`** to plot trendlines is a useful way to get more information from your scatterplots. To get an idea for how other kinds of statistical elements can be drawn onto ggplot plots, we'll look at examples using histograms and boxplots.
 
-To get an idea for how other kinds of plots are built in ggplot, we'll look at two more: histograms and barplots.
+First, a simple histogram of 3 soil nutrients.
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
   geom_histogram(aes(x=value), color='black',fill='white',bins=15) +
-  facet_wrap(nutrient~., scales='free') +
+  facet_wrap(~nutrient, scales='free') +
   xlab('mg / 100g soil') +
   theme_dark() +
   theme(axis.text = element_text(size=14),
@@ -254,13 +254,13 @@ ggplot(soil.nut) +
         strip.text = element_text(size = 16, face='bold'))
 ```
 
-Here is how to add a density curve to the histogram:
+Here is how to add a density curve to the histogram with another **`geom`**:
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
   geom_histogram(aes(x=value, y=..density..), color='black', fill='white',bins=15) +
   geom_density(aes(x=value,color=nutrient), size=1.5) +
-  facet_wrap(nutrient~., scales='free') +
+  facet_wrap(~nutrient, scales='free') +
   xlab('mg / 100g soil') +
   theme_dark() +
   theme(legend.position='none',
@@ -269,16 +269,14 @@ ggplot(soil.nut) +
         strip.text = element_text(size = 16, face='bold'))
 ```
 
-And here's how we can simply compare our distributions to a normal distribution:
-
+And here's how we can compare our distributions to a normal distribution, using a **`stat`** function:
 
 ```{r fig.height=6, fig.width=14}
 ggplot(soil.nut) +
   geom_histogram(aes(x=value, y=..density..), color='black', fill='white',bins=15) +
-  #geom_density(aes(x=value,color=nutrient)) +
   stat_function(fun = dnorm, color = 'blue', size = 1.5,
                 args=list(mean=mean(soil.nut$value), sd=sd(soil.nut$value))) +
-  facet_wrap(nutrient~., scales='free') +
+  facet_wrap(~nutrient, scales='free') +
   xlab('mg / 100g soil') +
   theme_dark() +
   theme(legend.position='none',
@@ -287,22 +285,49 @@ ggplot(soil.nut) +
         strip.text = element_text(size = 16, face='bold'))
 ```
 
+Let's go back to our basic boxplot, the default plot for visualizing continuous data against categories.
 
+First, you may have noticed that the whiskers do not have caps on them, as they do in base R. This is a matter of ~~principle~~ personal preference, but if capless whiskers look "off" to you, then you can work around it using **`stat_boxplot`**. **`stat`** functions are another group of functions for creating layers based on statistical properties of the data. Another example is **`stat_summary`**, which we use in the example below to add means to the boxplot. 
 
-### ggplot extensions
+```{r}
+ggplot(soil, aes(Contour,pH)) +
+  stat_boxplot(geom = "errorbar", width = 0.2) +  
+  geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", size=5, color="black")
+  
+```
 
-Several packages have been created that build off of ggplot's syntax with additional functions. You can find a list of them [here](http://www.ggplot2-exts.org/gallery/). We'll do an example using ggmap, a popular package for mapping.
+### Beyond ggplot
 
+ggplot contains an incredibly rich and powerful set of tools for visualizing data. But ggplot and base R are not your only options! A variety of packages exist for visualization, including:
 
+##### ggplot extensions
 
-### Interactive plots: leaflet and plotly
+Several packages have been created that build off of ggplot's syntax with additional functions. You can find a list of them [here](http://www.ggplot2-exts.org/gallery/). 
 
-### Other plotting libraries
-This section might mention visreg, corrplot/ggcorrplot, maptree, rpart.plot, others specific to certain analytical methods
+##### Technique-specific plotting libraries
+
+Several analytical packages come with their own plotting functions that produce some very nice visualizations. There are dozens out there, but a few of them are [visreg]() for regression plots, [corrplot]() (and its ggplot counterpart, [ggcorrplot]()) for graphical presentation of correlation matrices, and [rpart.plot]() as a companion to the decision tree package rpart.
+
+##### Interactive plots: leaflet and plotly
+
+Increasingly, scientific journals are providing platforms for interactive graphics on their websites to accompany published articles. Interactive plots are also popular for personal, lab, and organizational websites, and they can provide another option for your own data exploration. Two of the most popular in R are [plotly](https://plot.ly/r/), which offers a huge variety of 2D and 3D plots, and [leaflet](https://rstudio.github.io/leaflet/), which is specifically for mapping.
+
+Here's a quick and simple example of leaflet in action using the "possumsites" dataframe that accompanies the "possum" dataset in the DAAG package. The dataset contains body measurements of several possums in Australia. Where did they catch these possums?
+
+```{r}
+leaflet(possumsites) %>%
+  addTiles() %>% #Adds map tiles from OpenStreetMap
+  addMarkers(lng=c(possumsites$Longitude), lat=c(possumsites$Latitude), 
+             popup=c(as.character(possumsites$altitude))) #Adds markers for the sites
+```
+
+Happy plotting!
+
 
 ### Challenge exercises
 
-USing our scatterplot of calcium by pH, in which points were colored according to which depth they represent, fit a trendline to each cloud of points. Have the color of the trendline match the color of each cloud of points, and remove the confidence band from the trendlines.
+1. Using our scatterplot of calcium by pH, in which points were colored according to which depth they represent, fit a trendline to each cloud of points. Have the color of the trendline match the color of each cloud of points, and remove the confidence band from the trendlines.
 
 ```{r include=FALSE}
 
@@ -315,4 +340,18 @@ ggplot(soil) +
   ylab('Ca (mg/100g soil)') +
   scale_fill_manual(values=c('#FFF0BF','#FFC300','#BF9200','#604900'), name='Depth (cm)') +
   scale_color_manual(values=c('#FFF0BF','#FFC300','#BF9200','#604900'))
+```
+
+2. Create a boxplot that shows the values of Ca, Mg, and Na across all 3 contour positions, with no faceting (all on one plot). Add a diamond symbol indicating the mean value across all 3 contour positions for each nutrient.
+
+
+```{r include=FALSE}
+
+#Solution
+
+ggplot(soil.nut) +
+  geom_boxplot(aes(nutrient, value, fill=Contour)) +
+  stat_summary(aes(nutrient, value), 
+               fun.y=mean, geom="point", shape=18, size=4, color='black')
+  
 ```
